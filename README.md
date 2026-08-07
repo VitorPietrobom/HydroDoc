@@ -84,7 +84,7 @@ idf.py set-target esp32
 idf.py build
 ```
 
-CI also runs the firmware build inside the official ESP-IDF container.
+CI also runs the firmware build with Espressif’s ESP-IDF CI action pinned to ESP-IDF v5.3.5 for reproducible builds.
 
 ## Roadmap
 
