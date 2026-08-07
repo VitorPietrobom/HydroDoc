@@ -15,11 +15,17 @@ jobs:
   esp-idf-build:
     runs-on: ubuntu-latest
     container: espressif/idf:release-v5.3
+    defaults:
+      run:
+        shell: bash
     steps:
       - uses: actions/checkout@v4
       - name: Build firmware
-        shell: bash
+        working-directory: firmware
         run: |
-          . /opt/esp/idf/export.sh
-          cd firmware
+          if [ -f /opt/esp/idf/export.sh ]; then
+            . /opt/esp/idf/export.sh
+          fi
+          idf.py --version
+          idf.py set-target esp32
           idf.py build
