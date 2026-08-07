@@ -14,5 +14,5 @@
 extern "C" void app_main(void)
 {
     hydromonitor::logging::initialize();
-    ESP_LOGI("HydroDoc", "Water Bottle Monitor firmware starting");
+    ESP_LOGI("HydroDock", "Water Bottle Monitor firmware starting");
 }

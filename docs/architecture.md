@@ -1,6 +1,6 @@
 # Firmware Architecture
 
-HydroDoc uses a local-first, event-driven firmware architecture. The firmware owns hardware interactions, local reminders, persistent event storage, and synchronization state. External applications consume events for dashboards, long-term analytics, cloud sync, and health integrations.
+HydroDock uses a local-first, event-driven firmware architecture. The firmware owns hardware interactions, local reminders, persistent event storage, and synchronization state. External applications consume events for dashboards, long-term analytics, cloud sync, and health integrations.
 
 ## Component pipeline
 
