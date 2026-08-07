@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  firmware-layout:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate firmware layout
+        run: scripts/check_firmware_layout.sh
+
+  esp-idf-build:
+    runs-on: ubuntu-latest
+    container: espressif/idf:release-v5.3
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build firmware
+        shell: bash
+        run: |
+          . /opt/esp/idf/export.sh
+          cd firmware
+          idf.py build
