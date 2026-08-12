@@ -24,6 +24,7 @@ constexpr std::array<uint8_t, 5> glyph_for(char ch)
 {
     switch (ch) {
     case '0': return {0x3E, 0x51, 0x49, 0x45, 0x3E};
+    case '-': return {0x08, 0x08, 0x08, 0x08, 0x08};
     case '1': return {0x00, 0x42, 0x7F, 0x40, 0x00};
     case '2': return {0x42, 0x61, 0x51, 0x49, 0x46};
     case '3': return {0x21, 0x41, 0x45, 0x4B, 0x31};
@@ -34,6 +35,7 @@ constexpr std::array<uint8_t, 5> glyph_for(char ch)
     case '8': return {0x36, 0x49, 0x49, 0x49, 0x36};
     case '9': return {0x06, 0x49, 0x49, 0x29, 0x1E};
     case ':': return {0x00, 0x36, 0x36, 0x00, 0x00};
+    case 'A': return {0x7E, 0x09, 0x09, 0x09, 0x7E};
     case 'C': return {0x3E, 0x41, 0x41, 0x41, 0x22};
     case 'D': return {0x7F, 0x41, 0x41, 0x22, 0x1C};
     case 'E': return {0x7F, 0x49, 0x49, 0x49, 0x41};
@@ -46,6 +48,7 @@ constexpr std::array<uint8_t, 5> glyph_for(char ch)
     case 'S': return {0x46, 0x49, 0x49, 0x49, 0x31};
     case 'T': return {0x01, 0x01, 0x7F, 0x01, 0x01};
     case 'U': return {0x3F, 0x40, 0x40, 0x40, 0x3F};
+    case 'W': return {0x7F, 0x20, 0x18, 0x20, 0x7F};
     case 'Y': return {0x07, 0x08, 0x70, 0x08, 0x07};
     default: return {0x00, 0x00, 0x00, 0x00, 0x00};
     }
@@ -160,6 +163,23 @@ esp_err_t Display::render_hardware_test(uint32_t counter)
     char counter_text[16]{};
     std::snprintf(counter_text, sizeof(counter_text), "COUNT: %lu", static_cast<unsigned long>(counter));
     return draw_text(5, 0, counter_text);
+}
+
+esp_err_t Display::render_hx711_raw(int32_t raw_value)
+{
+    ESP_RETURN_ON_ERROR(clear(), kTag, "SSD1306 HX711 raw clear failed");
+    ESP_RETURN_ON_ERROR(draw_text(1, 0, "HYDRODOCK"), kTag, "SSD1306 title draw failed");
+
+    char raw_text[24]{};
+    std::snprintf(raw_text, sizeof(raw_text), "RAW: %ld", static_cast<long>(raw_value));
+    return draw_text(3, 0, raw_text);
+}
+
+esp_err_t Display::render_hx711_error()
+{
+    ESP_RETURN_ON_ERROR(clear(), kTag, "SSD1306 HX711 error clear failed");
+    ESP_RETURN_ON_ERROR(draw_text(1, 0, "HYDRODOCK"), kTag, "SSD1306 title draw failed");
+    return draw_text(3, 0, "RAW: ERROR");
 }
 
 void Display::render(const DisplayState& state) { state_ = state; }
