@@ -165,20 +165,19 @@ esp_err_t Display::render_hardware_test(uint32_t counter)
     return draw_text(5, 0, counter_text);
 }
 
-esp_err_t Display::render_hx711_raw(int32_t raw_value)
+esp_err_t Display::render_hx711(int32_t raw_value)
 {
-    ESP_RETURN_ON_ERROR(clear(), kTag, "SSD1306 HX711 raw clear failed");
-    ESP_RETURN_ON_ERROR(draw_text(1, 0, "HYDRODOCK"), kTag, "SSD1306 title draw failed");
+    ESP_RETURN_ON_ERROR(draw_text(1, 0, "HYDRODOCK V0.1"), kTag, "SSD1306 title draw failed");
 
-    char raw_text[24]{};
-    std::snprintf(raw_text, sizeof(raw_text), "RAW: %ld", static_cast<long>(raw_value));
-    return draw_text(3, 0, raw_text);
+    char text[24]{};
+    std::snprintf(text, sizeof(text), "Weight Value: %ld", static_cast<long>(raw_value));
+    return draw_text(3, 0, text);
 }
 
 esp_err_t Display::render_hx711_error()
 {
     ESP_RETURN_ON_ERROR(clear(), kTag, "SSD1306 HX711 error clear failed");
-    ESP_RETURN_ON_ERROR(draw_text(1, 0, "HYDRODOCK"), kTag, "SSD1306 title draw failed");
+    ESP_RETURN_ON_ERROR(draw_text(1, 0, "HYDRODOCK V0.1"), kTag, "SSD1306 title draw failed");
     return draw_text(3, 0, "RAW: ERROR");
 }
 

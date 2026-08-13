@@ -19,7 +19,7 @@ constexpr gpio_num_t kOledSdaPin = GPIO_NUM_21;
 constexpr gpio_num_t kOledSclPin = GPIO_NUM_22;
 constexpr gpio_num_t kHx711DataPin = GPIO_NUM_26;
 constexpr gpio_num_t kHx711ClockPin = GPIO_NUM_25;
-constexpr TickType_t kHardwareTestInterval = pdMS_TO_TICKS(500);
+constexpr TickType_t kHardwareTestInterval = pdMS_TO_TICKS(50);
 constexpr uint32_t kHx711TimeoutMs = 250;
 } // namespace
 
@@ -37,6 +37,13 @@ extern "C" void app_main(void)
         ESP_LOGE(kTag, "HX711 initialization failed: %s", esp_err_to_name(hx711_init_result));
     }
 
+    hydromonitor::weight::WeightCalibration calibration{
+        .tare_raw = -162800,
+        .grams_per_count = 439.0f
+    };
+
+    hydromonitor::weight::WeightSensor weight_sensor(scale, calibration);
+
     hydromonitor::oled::Display display;
     const esp_err_t oled_init_result = display.initialize(I2C_NUM_0, kOledSdaPin, kOledSclPin);
     if (oled_init_result != ESP_OK) {
@@ -44,18 +51,16 @@ extern "C" void app_main(void)
     }
 
     while (true) {
-        int32_t raw_value = 0;
-        const esp_err_t read_result =
-            hx711_init_result == ESP_OK ? scale.read_raw(raw_value, kHx711TimeoutMs) : hx711_init_result;
+        int32_t value = weight_sensor.read().grams;
 
         esp_err_t render_result = ESP_OK;
-        if (read_result == ESP_OK) {
-            ESP_LOGI(kTag, "HX711 raw: %ld", static_cast<long>(raw_value));
+        if (value) {
+            ESP_LOGI(kTag, "HX711 raw: %ld", static_cast<long>(value));
             if (oled_init_result == ESP_OK) {
-                render_result = display.render_hx711_raw(raw_value);
+                render_result = display.render_hx711(value);
             }
         } else {
-            ESP_LOGW(kTag, "HX711 read failed: %s", esp_err_to_name(read_result));
+            ESP_LOGW(kTag, "HX711 read failed");
             if (oled_init_result == ESP_OK) {
                 render_result = display.render_hx711_error();
             }
